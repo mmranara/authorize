@@ -33,7 +33,6 @@ const routes = [{
                 component: () =>
                     import ('pages/MonitorSchool.vue')
             },
-            { path: '/index', component: () => import('src/pages/Admin.vue') },
         ]
     }
 ]

@@ -31,7 +31,6 @@
           :data="studentData"
           :columns="roomColumns"
           row-key="name"
-          @row-click="onRowClick"
         >
         </q-table>
       </div>

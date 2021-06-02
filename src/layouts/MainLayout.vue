@@ -16,7 +16,7 @@
           <q-img src="~assets/logo.png" style="width:40px"></q-img>
         </q-toolbar-title>
 
-                <q-btn
+        <q-btn
             outline
             rounded
             v-if="!userDetails.userId"
@@ -68,7 +68,7 @@
 
         <q-item clickable to="/mestablishment" exact>
           <q-item-section avatar>
-            <q-icon name="monitor establishment" />
+            <q-icon name="monitor" />
           </q-item-section>
           <q-item-section>
             <q-item-label>Monitor Establishment</q-item-label>
@@ -78,7 +78,7 @@
 
         <q-item clickable to="/mschool" exact>
           <q-item-section avatar>
-            <q-icon name="monitor school" />
+            <q-icon name="school" />
           </q-item-section>
           <q-item-section>
             <q-item-label>Monitor School</q-item-label>

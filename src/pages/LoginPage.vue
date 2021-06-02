@@ -57,6 +57,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+
 export default {
   name: 'LoginPage.vue',
   data () {
@@ -71,7 +72,6 @@ export default {
   methods: {
     ...mapActions('store', ['loginUser']),
     onSubmit () {
-      alert(this.formData)
       this.loginUser(this.formData)
     }
   }

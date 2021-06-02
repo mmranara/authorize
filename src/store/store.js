@@ -14,9 +14,12 @@ const actions = {
       .then(response => {
         console.log(response)
         let userId = firebaseAuth.currentUser.uid
-        firebaseDb.ref('admin/' + userId).set({
+        firebaseDb.ref('users/' + userId).set({
           name: payload.name,
-          mobile: payload.mobile,
+          type: payload.type,
+          level: payload.level,
+          contact: payload.contact,
+          contact1: payload.contact1,
           address: payload.address,
           email: payload.email,
           online: true
@@ -44,22 +47,26 @@ const actions = {
       if (user) {
         // User is logged in.
         let userId = firebaseAuth.currentUser.uid
-        firebaseDb.ref('admins/' + userId).once('value', snapshot => {
+        firebaseDb.ref('users/' + userId).once('value', snapshot => {
           let userDetails = snapshot.val()
           commit('setUserDetails', {
             name: userDetails.name,
-            mobile: userDetails.mobile,
+            middlename: userDetails.middlename,
+            type: userDetails.type,
+            level: userDetails.level,
             address: userDetails.address,
-            email: userDetails.email
+            contact: userDetails.contact,
+            contact1: userDetails.contact1,
+            userId: userId
           })
         })
         dispatch('firebaseUpdateUser', {
-          userId: state.userDetails.userId,
+          userId: userId,
           updates: {
-            online: false
+            online: true
           }
         })
-        this.$router.push('/index')
+        this.$router.push('/mestablishment')
       } else {
         // User is logged out.
         dispatch('firebaseUpdateUser', {
@@ -73,6 +80,8 @@ const actions = {
       }
     })
   },
+
+  
 
   firebaseUpdateUser (importantThing = {}, payload) {
     if (payload.userId) {
