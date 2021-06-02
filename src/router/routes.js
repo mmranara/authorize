@@ -32,7 +32,8 @@ const routes = [{
                 path: '/mschool',
                 component: () =>
                     import ('pages/MonitorSchool.vue')
-            }
+            },
+            { path: '/index', component: () => import('src/pages/Admin.vue') },
         ]
     }
 ]
