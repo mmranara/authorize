@@ -63,6 +63,7 @@ export default {
         { align: 'center', label: 'Contact No.', field: 'contact' },
         { align: 'center', label: 'Time Stamp', field: 'timeStamp' },
         { align: 'center', label: 'Low Risk', field: '' },
+        { align: 'center', label: 'Moderate Risk', field: '' },
         { align: 'center', label: 'High Risk', field: '' }
       ],
 

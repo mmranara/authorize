@@ -16,6 +16,61 @@
           <q-img src="~assets/logo.png" style="width:40px"></q-img>
         </q-toolbar-title>
 
+
+        <div class="q-pa-md" v-if="hasNotifs == true">
+          <q-btn flat round color="white" label="" icon = "notifications_active">
+            <q-menu>
+               <div class="q-pa-md" style="max-width: 550px">
+                <q-list>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label>Infinitea</q-item-label>
+                      <q-item-label caption ckass = "text-h7">Convenience Store</q-item-label>
+                      <q-item-label>
+                          <q-btn size = "xs" class ="q-mr-xs" color="blue">Accept</q-btn> 
+                          <q-btn size = "xs" class ="q-mr-xs" color="red">Decline</q-btn>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+
+                  <q-separator spaced inset />
+
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label>G7</q-item-label>
+                      <q-item-label caption ckass = "text-h7">School</q-item-label>
+                      <q-item-label>
+                          <q-btn size = "xs" class ="q-mr-xs" color="blue">Accept</q-btn> 
+                          <q-btn size = "xs" class ="q-mr-xs" color="red">Decline</q-btn>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+
+                  <q-separator spaced inset />
+
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label>D'Morvie</q-item-label>
+                      <q-item-label caption ckass = "text-h7">Restaurant</q-item-label>
+                      <q-item-label>
+                          <q-btn size = "xs" class ="q-mr-xs" color="blue">Accept</q-btn> 
+                          <q-btn size = "xs" class ="q-mr-xs" color="red">Decline</q-btn>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </div>
+            </q-menu>
+          </q-btn>
+        </div>
+
+        <div class="q-pa-md" v-if="hasNotifs == false">
+          <q-btn flat round color="white" label="" icon = "notifications">
+          </q-btn>
+        </div>
+        
+
+
         <q-btn
             outline
             rounded
@@ -26,6 +81,7 @@
             no-caps
             label="Login">
         </q-btn>
+
         <q-btn
         outline
             rounded
@@ -39,6 +95,7 @@
             Logout<br>
             {{ userDetails.name }}
         </q-btn>
+
 
       </q-toolbar>
     </q-header>
@@ -56,7 +113,7 @@
           <q-img src="~assets/lol.png" class="menu-image absolute-top"  />
         </q-item>
 
-        <q-item clickable to="/stat" exact>
+        <q-item clickable to="/stat" exact active-class="text-teal">
           <q-item-section avatar>
             <q-icon name="poll" />
           </q-item-section>
@@ -66,7 +123,7 @@
           </q-item-section>
         </q-item>
 
-        <q-item clickable to="/mestablishment" exact>
+        <q-item clickable to="/mestablishment" exact active-class="text-teal">
           <q-item-section avatar>
             <q-icon name="monitor" />
           </q-item-section>
@@ -76,7 +133,7 @@
           </q-item-section>
         </q-item>
 
-        <q-item clickable to="/mschool" exact>
+        <q-item clickable to="/mschool" exact active-class="text-teal">
           <q-item-section avatar>
             <q-icon name="school" />
           </q-item-section>
@@ -102,7 +159,8 @@ export default {
   name: 'MyLayout.vue',
   data () {
     return {
-      leftDrawerOpen: this.$q.platform.is.desktop
+      leftDrawerOpen: this.$q.platform.is.desktop,
+      hasNotifs: true
     }
   },
   computed: {

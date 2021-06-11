@@ -33,6 +33,11 @@ const routes = [{
                 component: () =>
                     import ('pages/MonitorSchool.vue')
             },
+            {
+                path: '/high-risk',
+                component: () =>
+                    import ('pages/HighRisk.vue')
+            },
         ]
     }
 ]

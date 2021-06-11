@@ -24,15 +24,39 @@
           </span>
       </div>
     </div>
-
     <div>
       <div class="q-pa-xs">
-        <q-table
-          :data="studentData"
-          :columns="roomColumns"
-          row-key="name"
-        >
-        </q-table>
+      <q-table
+        :data="studentData"
+        :columns="roomColumns"
+        row-key="name"
+      >
+      <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td
+              v-for="(col) in props.cols"
+              :key="col.name"
+              :props="props"
+            >
+              {{ col.value }}
+            </q-td>
+            <q-td>
+              <q-toggle
+                v-model="props.row.riskState"
+                color="teal"
+                icon="mail"
+                label=""
+              />
+            </q-td>
+            <q-td>
+              <q-btn v-if="props.row.riskState == 1" flat round color = "red" icon = "mail" size ="md "  @click="deleteUser(props.row.key)"/>
+            </q-td>
+            <q-td>
+              <q-btn flat round color = "red" icon = "delete" size ="md "  @click="deleteUser(props.row.key)"/>
+            </q-td>
+          </q-tr>
+        </template>
+      </q-table>
       </div>
     </div>
   </div>
@@ -60,13 +84,20 @@ export default {
         { name: 'date', label: 'Teacher', field: 'date', align: 'center' },
       ],
       roomColumns: [
-        { align: 'center', label: 'Name', field: 'name' },
-        { align: 'center', label: 'Age', field: 'age' },
-        { align: 'center', label: 'Address', field: 'address' },
-        { align: 'center', label: 'Contact No.', field: 'contact' },
-        { align: 'center', label: 'Time Stamp', field: 'timeStamp' },
-        { align: 'center', label: 'Low Risk' },
-        { align: 'center', label: 'High Risk' }
+        {
+          name: 'name',
+          required: true,
+          label: 'Name',
+          align: 'left',
+          field: row => row.name,
+          format: name => `${name}`
+        },
+        { name: 'age', align: 'center', label: 'Age', field: 'age' },
+        { name: 'address', align: 'center', label: 'Address', field: 'address' },
+        { name: 'contact', align: 'center', label: 'Contact No.', field: 'contact' },
+        { name: 'timeStamp', align: 'center', label: 'Time Stamp', field: 'timeStamp' },
+        { align: 'center', label: 'Risk Type', field: 'timeStamp' },
+        { align: 'center', label: '', field: 'timeStamp' },
       ],
       studentData:   [],
       display: false,
@@ -105,6 +136,13 @@ export default {
     }
   },
   methods: {
+    hemlo () {
+      alert('hemlo')
+    },
+    deleteUser (id) {
+      alert(id)
+    },
+
     onRowClick (evt, row) {
       this.display = true;
 
@@ -114,11 +152,10 @@ export default {
       snapshot.forEach(function (childSnapshot) {
           var room = childSnapshot.val()
           var date = new Date(parseInt(room.date)).toString()
-          rooms.push({ name: room.name, age: room.age, address: room.address, contact: room.contact, timeStamp: date, key: childSnapshot.key })
+          rooms.push({ name: room.name, age: room.age, address: room.address, contact: room.contact, timeStamp: date, key: childSnapshot.key, riskState: room.risk_state })
           })
       })
       this.studentData = rooms
-
     }
   },
   mounted () {
