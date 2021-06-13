@@ -17,8 +17,9 @@
         </q-toolbar-title>
 
 
-        <div class="q-pa-md" v-if="hasNotifs == true">
-          <q-btn flat round color="white" label="" icon = "notifications_active">
+        <div class="q-pa-md">
+          <q-btn flat round color="white" label="" icon = "notifications">
+            <q-badge rounded v-if="hasNotifs == true" color="red" floating>3</q-badge>
             <q-menu>
                <div class="q-pa-md" style="max-width: 550px">
                 <q-list>
@@ -63,13 +64,6 @@
             </q-menu>
           </q-btn>
         </div>
-
-        <div class="q-pa-md" v-if="hasNotifs == false">
-          <q-btn flat round color="white" label="" icon = "notifications">
-          </q-btn>
-        </div>
-        
-
 
         <q-btn
             outline

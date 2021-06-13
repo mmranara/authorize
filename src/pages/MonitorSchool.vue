@@ -7,6 +7,7 @@
     <div>
       <div class="q-pa-xs">
         <q-table
+          class="rowSchool"
           :data="data"
           :columns="columns"
           row-key="name"
@@ -49,7 +50,31 @@
               />
             </q-td>
             <q-td>
-              <q-btn v-if="props.row.riskState == 1" flat round color = "red" icon = "mail" size ="md "  @click="deleteUser(props.row.key)"/>
+              <q-toggle
+                v-model="props.row.riskState"
+                color="teal"
+                icon="mail"
+                label=""
+              />
+            </q-td>
+            <q-td>
+              <q-toggle
+                v-model="props.row.riskState"
+                color="teal"
+                icon="mail"
+                label=""
+              />
+            </q-td>
+            <q-td>
+              <q-toggle
+                v-model="props.row.mail"
+                color="teal"
+                icon="mail"
+                label=""
+              />
+            </q-td>
+            <q-td>
+              <q-btn v-if="props.row.mail == 1" flat round color = "red" icon = "mail" size ="md "  @click="deleteUser(props.row.key)"/>
             </q-td>
             <q-td>
               <q-btn flat round color = "red" icon = "delete" size ="md "  @click="deleteUser(props.row.key)"/>
@@ -96,7 +121,10 @@ export default {
         { name: 'address', align: 'center', label: 'Address', field: 'address' },
         { name: 'contact', align: 'center', label: 'Contact No.', field: 'contact' },
         { name: 'timeStamp', align: 'center', label: 'Time Stamp', field: 'timeStamp' },
-        { align: 'center', label: 'Risk Type', field: 'timeStamp' },
+        { align: 'center', label: 'Low Risk', field: '' },
+        { align: 'center', label: 'Moderate Risk', field: '' },
+        { align: 'center', label: 'High Risk', field: '' },
+        { align: 'center', label: 'Mail', field: 'timeStamp' },
         { align: 'center', label: '', field: 'timeStamp' },
       ],
       studentData:   [],
@@ -152,7 +180,7 @@ export default {
       snapshot.forEach(function (childSnapshot) {
           var room = childSnapshot.val()
           var date = new Date(parseInt(room.date)).toString()
-          rooms.push({ name: room.name, age: room.age, address: room.address, contact: room.contact, timeStamp: date, key: childSnapshot.key, riskState: room.risk_state })
+          rooms.push({ name: room.name, age: room.age, address: room.address, contact: room.contact, timeStamp: date, key: childSnapshot.key, mail: room.risk_state })
           })
       })
       this.studentData = rooms
