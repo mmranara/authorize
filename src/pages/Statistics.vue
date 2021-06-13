@@ -1,27 +1,30 @@
 <template>
     <q-page class="container">
-      
-    {{ d }}
+    
+   <div class="q-pa-md">
 
-   <div class="q-pa-md">   
-    <q-btn-dropdown color="teal" :label="date">
-      <div class="q-gutter-md row items-start">
-        <q-date color="teal" v-model="date" />
+      <div class="q-gutter-md q-mb-lg row" style="max-width: 500px">
+        <q-input v-model="searchModel" label="Search" color="teal"/>
       </div>
-    </q-btn-dropdown>
 
-    <q-btn-dropdown class = "q-ml-md" color="teal" :label="chosen">
-    <q-list>
-        <q-item
-          v-for = "stores in establishments"
-          :key="stores.key"
-          clickable v-close-popup @click="onSelectEstablishment(stores.key)">
-        <q-item-section>
-            <q-item-label>{{stores.storeName}}</q-item-label>
-        </q-item-section>
-        </q-item>
-    </q-list>
-    </q-btn-dropdown>
+      <q-btn-dropdown color="teal" :label="date">
+        <div class="q-gutter-md row items-start">
+          <q-date color="teal" v-model="date" />
+        </div>
+      </q-btn-dropdown>
+
+      <q-btn-dropdown class = "q-ml-md" color="teal" :label="chosen">
+      <q-list>
+          <q-item
+            v-for = "stores in establishments"
+            :key="stores.key"
+            clickable v-close-popup @click="onSelectEstablishment(stores.key)">
+          <q-item-section>
+              <q-item-label>{{stores.storeName}}</q-item-label>
+          </q-item-section>
+          </q-item>
+      </q-list>
+      </q-btn-dropdown>
 
 
      <div>
@@ -242,7 +245,6 @@ export default {
       })  
     })
     this.establishments = rooms
-    alert('Hello World')
     this.d = Date.now()
     this.ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(this.d);
     this.mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(this.d);
