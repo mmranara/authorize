@@ -3,8 +3,8 @@
     
    <div class="q-pa-md">
 
-      <div class="q-gutter-md q-mb-lg row" style="max-width: 500px">
-        <q-input v-model="searchModel" label="Search" color="teal"/>
+      <div class="q-gutter-md q-mb-lg row justify-center items-center" style="max-width: 500px">
+        <q-input class="" v-model="searchModel" label="Search" color="teal"/>
       </div>
 
       <q-btn-dropdown color="teal" :label="date">
@@ -26,97 +26,45 @@
       </q-list>
       </q-btn-dropdown>
 
-
      <div>
         <q-separator dark inset /><q-separator dark inset /><q-separator dark inset /><q-separator dark inset /><q-separator dark inset /><q-separator dark inset />
      </div>
-    <div>
-      <div class="q-pa-xs">
-        <q-table
-          :data="data"
-          :columns="columns"
-          row-key="name"
-        >
-        </q-table>
-      </div>
-    </div>
 
-  <div v-if="display == true">
-    <div class="row">
-      <div class="col-12 q-pa-md bg-teal-10 text-white text-center">
-          <span class="text-h6 ">
-          Room History
-          </span>
-      </div>
+    
+
+      <q-card class="">
+        <div class="text-h5 q-ma-md row justify-center items-center">{{ chosen }}</div>
+        <div
+          class="row q-col-gutter-md q-px-md q-py-md"
+          key="allCharts"
+        >
+          <q-card class="q-ma-md q-pa-xl">
+            <div class="col-md-6 col-sm-12 col-xs-12">
+                <apex-donut></apex-donut>
+            </div>
+          </q-card>
+
+          <q-card class="q-ma-md q-pa-xl">
+            <div class="col-md-6 col-sm-12 col-xs-12">
+                <apex-area></apex-area>
+            </div>
+          </q-card>
+        </div>
+      </q-card>
     </div>
-    <div>
-      <div class="q-pa-xs">
-      <q-table
-        :data="studentData"
-        :columns="roomColumns"
-        row-key="name"
-      >
-      <template v-slot:body="props">
-          <q-tr :props="props">
-            <q-td
-              v-for="(col) in props.cols"
-              :key="col.name"
-              :props="props"
-            >
-              {{ col.value }}
-            </q-td>
-            <q-td>
-              <q-toggle
-                v-model="props.row.riskState"
-                color="teal"
-                icon="mail"
-                label=""
-              />
-            </q-td>
-            <q-td>
-              <q-toggle
-                v-model="props.row.riskState"
-                color="teal"
-                icon="mail"
-                label=""
-              />
-            </q-td>
-            <q-td>
-              <q-toggle
-                v-model="props.row.riskState"
-                color="teal"
-                icon="mail"
-                label=""
-              />
-            </q-td>
-            <q-td>
-              <q-toggle
-                v-model="props.row.mail"
-                color="teal"
-                icon="mail"
-                label=""
-              />
-            </q-td>
-            <q-td>
-              <q-btn v-if="props.row.mail == 1" flat round color = "red" icon = "mail" size ="md "  @click="deleteUser(props.row.key)"/>
-            </q-td> 
-            <q-td>
-              <q-btn flat round color = "red" icon = "delete" size ="md "  @click="deleteUser(props.row.key)"/>
-            </q-td>
-          </q-tr>
-        </template>
-      </q-table>
-      </div>
-    </div>
-  </div>
-  </div>
   </q-page>
 </template>
 
 <script>
+import CardBase from 'components/CardBase'
+import { mapState, mapActions } from 'vuex'
 import { firebaseDb } from 'src/boot/firebase'
 export default {
   name: 'PageIndex',
+  components: {
+    ApexArea: () => import('components/ApexArea'),
+    ApexDonut: () => import('components/ApexDonut')
+  },
   data () {
     return {
       d: '',
@@ -200,6 +148,9 @@ export default {
       },]
     }
   },
+  computed: {
+    ...mapState('store', ['userDetails'])
+  },
   methods: {
     onSelectEstablishment (est_key) {
         //   firebaseDb.ref('users/' + est_key + '/customers').push({
@@ -250,6 +201,7 @@ export default {
     this.mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(this.d);
     this.da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(this.d);
     this.date = `${this.ye}/${this.mo}/${this.da}`
+    this.renderChart(this.chartdata, this.options)
   }
 }
 </script>

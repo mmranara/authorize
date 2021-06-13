@@ -13,6 +13,20 @@
           row-key="name"
           @row-click="onRowClick"
         >
+        <template v-slot:body="props">
+        <q-tr :props="props">
+          <q-td
+            v-for="(col) in props.cols"
+            :key="col.name"
+            :props="props"
+          >
+            {{ col.value }}
+          </q-td>
+          <q-td>
+            <q-btn flat round color = "red" icon = "delete" @click="deleteRoom(props.row)"/>
+          </q-td>
+        </q-tr>
+      </template>
         </q-table>
       </div>
     </div>
@@ -74,7 +88,7 @@
               />
             </q-td>
             <q-td>
-              <q-btn v-if="props.row.mail == 1" flat round color = "red" icon = "mail" size ="md "  @click="deleteUser(props.row.key)"/>
+              <q-btn v-if="props.row.mail == 1" flat round color = "red" icon = "mail" size ="md "  @click="deleteUser(props.row)"/>
             </q-td>
             <q-td>
               <q-btn flat round color = "red" icon = "delete" size ="md "  @click="deleteUser(props.row.key)"/>
@@ -107,6 +121,7 @@ export default {
         { name: 'timein', label: 'Time In', field: 'timein' },
         { name: 'logout', label: 'Time Out', field: 'logout' },
         { name: 'date', label: 'Teacher', field: 'date', align: 'center' },
+        { align: 'center', label: '', field: 'timeStamp' },
       ],
       roomColumns: [
         {
@@ -126,6 +141,7 @@ export default {
         { align: 'center', label: 'High Risk', field: '' },
         { align: 'center', label: 'Mail', field: 'timeStamp' },
         { align: 'center', label: '', field: 'timeStamp' },
+        
       ],
       studentData:   [],
       display: false,
@@ -165,10 +181,16 @@ export default {
   },
   methods: {
     hemlo () {
-      alert('hemlo')
     },
     deleteUser (id) {
       alert(id)
+    },
+
+    deleteRoom (key) {
+      alert(key.name)
+      let index = this.data.indexOf(key)
+      firebaseDb.ref('rooms/' + key.id).remove()
+      this.data.splice(index, 1)
     },
 
     onRowClick (evt, row) {

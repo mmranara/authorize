@@ -11,11 +11,14 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
+    "apexcharts": "^3.27.1",
     "core-js": "^3.6.5",
     "firebase": "^8.6.3",
     "moment": "^2.29.1",
     "quasar": "^1.0.0",
-    "vue-qrcode-reader": "^3.0.1"
+    "vue-apexcharts": "^1.6.1",
+    "vue-qrcode-reader": "^3.0.1",
+    "vue3-apexcharts": "^1.4.0"
   },
   "devDependencies": {
     "@quasar/app": "^2.0.0",
