@@ -34,9 +34,9 @@ const routes = [{
                     import ('pages/MonitorSchool.vue')
             },
             {
-                path: '/high-risk',
+            path: '/notif',
                 component: () =>
-                    import ('pages/HighRisk.vue')
+                    import ('pages/Notif.vue')
             },
         ]
     }

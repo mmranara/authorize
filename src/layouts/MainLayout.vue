@@ -19,46 +19,22 @@
 
         <div class="q-pa-md">
           <q-btn flat round color="white" label="" icon = "notifications">
-            <q-badge rounded v-if="hasNotifs == true" color="red" floating>3</q-badge>
+            <q-badge rounded v-if="hasNotifs == true" color="red" floating>{{ this.notifs.length }}</q-badge>
             <q-menu>
                <div class="q-pa-md" style="max-width: 550px">
                 <q-list>
+
+                  <div v-for="notif in notifs" v-bind:key = "notif.key">
                   <q-item>
                     <q-item-section>
-                      <q-item-label>Infinitea</q-item-label>
-                      <q-item-label caption ckass = "text-h7">Convenience Store</q-item-label>
-                      <q-item-label>
-                          <q-btn size = "xs" class ="q-mr-xs" color="blue">Accept</q-btn> 
-                          <q-btn size = "xs" class ="q-mr-xs" color="red">Decline</q-btn>
-                      </q-item-label>
+                      <q-item-label>{{ notif.name }} sent a request </q-item-label>
+                      <a href = "#/notif" @click="goNotifs(notif.key)">view</a>
                     </q-item-section>
                   </q-item>
 
                   <q-separator spaced inset />
+                  </div>
 
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label>G7</q-item-label>
-                      <q-item-label caption ckass = "text-h7">School</q-item-label>
-                      <q-item-label>
-                          <q-btn size = "xs" class ="q-mr-xs" color="blue">Accept</q-btn> 
-                          <q-btn size = "xs" class ="q-mr-xs" color="red">Decline</q-btn>
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-
-                  <q-separator spaced inset />
-
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label>D'Morvie</q-item-label>
-                      <q-item-label caption ckass = "text-h7">Restaurant</q-item-label>
-                      <q-item-label>
-                          <q-btn size = "xs" class ="q-mr-xs" color="blue">Accept</q-btn> 
-                          <q-btn size = "xs" class ="q-mr-xs" color="red">Decline</q-btn>
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
                 </q-list>
               </div>
             </q-menu>
@@ -148,11 +124,12 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-
+import { firebaseDb } from 'src/boot/firebase'
 export default {
   name: 'MyLayout.vue',
   data () {
     return {
+      notifs: [],
       leftDrawerOpen: this.$q.platform.is.desktop,
       hasNotifs: true
     }
@@ -161,9 +138,22 @@ export default {
     ...mapState('store', ['userDetails'])
   },
   methods: {
-    ...mapActions('store', ['logoutUser'])
+    ...mapActions('store', ['logoutUser']),
+    goNotifs (id) {
+      firebaseDb.ref('dummy_cookie').set(id)
+    }
+  },
+  mounted () {
+    var rooms = []
+    var roomsRef = firebaseDb.ref('requests')
+    roomsRef.on('value', function (snapshot) {
+      snapshot.forEach(function (childSnapshot) {
+        var room = childSnapshot.val()
+        rooms.push({ name: room.name, key: childSnapshot.key })
+      })
+    })
+    this.notifs = rooms
   }
-
 }
 </script>
 

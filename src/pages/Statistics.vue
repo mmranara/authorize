@@ -3,28 +3,30 @@
     
    <div class="q-pa-md">
 
-      <div class="q-gutter-md q-mb-lg row justify-center items-center" style="max-width: 500px">
+      <div class="q-gutter-md q-mb-lg column" style="max-width: 500px">
         <q-input class="" v-model="searchModel" label="Search" color="teal"/>
       </div>
 
-      <q-btn-dropdown color="teal" :label="date">
-        <div class="q-gutter-md row items-start">
-          <q-date color="teal" v-model="date" />
-        </div>
-      </q-btn-dropdown>
+      <div class="row">
+        <q-btn-dropdown color="teal" :label="date">
+          <div class="q-gutter-md col items-start">
+            <q-date color="teal" v-model="date" />
+          </div>
+        </q-btn-dropdown>
 
-      <q-btn-dropdown class = "q-ml-md" color="teal" :label="chosen">
-      <q-list>
-          <q-item
-            v-for = "stores in establishments"
-            :key="stores.key"
-            clickable v-close-popup @click="onSelectEstablishment(stores.key)">
-          <q-item-section>
-              <q-item-label>{{stores.storeName}}</q-item-label>
-          </q-item-section>
-          </q-item>
-      </q-list>
-      </q-btn-dropdown>
+        <q-btn-dropdown class = "q-ml-md" color="teal" :label="chosen">
+        <q-list>
+            <q-item
+              v-for = "stores in establishments"
+              :key="stores.key"
+              clickable v-close-popup @click="onSelectEstablishment(stores.key)">
+            <q-item-section>
+                <q-item-label>{{stores.storeName}}</q-item-label>
+            </q-item-section>
+            </q-item>
+        </q-list>
+        </q-btn-dropdown>
+      </div>
 
      <div>
         <q-separator dark inset /><q-separator dark inset /><q-separator dark inset /><q-separator dark inset /><q-separator dark inset /><q-separator dark inset />
@@ -108,36 +110,6 @@ export default {
       studentData:   [],
       display: false,
       data: [
-        // {
-        //   name: 'COE 302',
-        //   date: 'Sir. Earl',
-        //   timein: '9:15 am',
-        //   logout: '1:30 pm'
-        // },
-        // {
-        //   name: 'CSM LHB',
-        //   date: 'Sir. Uy',
-        //   timein: '3:15 pm',
-        //   logout: '4:00 pm'
-        // },
-        // {
-        //   name: 'CASS 201',
-        //   date: 'Maam Gwapa',
-        //   timein: '6:00 pm',
-        //   logout: '7:00 pm'
-        // },
-        // {
-        //   name: 'CBAA 101',
-        //   date: 'Maam Gwaps',
-        //   timein: '7:30 pm',
-        //   logout: '9:30 pm'
-        // },
-        // {
-        //   name: 'aasf asf',
-        //   date: 'asf sfa',
-        //   timein: '7:3fa0asf pasdm',
-        //   logout: '9:30 asfpm'
-        // }
       ],
       searchModel: '',
       chosen: "Choose Establishment",
