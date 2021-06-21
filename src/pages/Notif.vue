@@ -50,11 +50,11 @@ export default {
     deleteRequest () {
       firebaseDb.ref('dummy_cookie/' + this.chosen).remove()
       firebaseDb.ref('requests/' + this.chosen).remove()
-      $this.route('/mestablishments')
+      this.$router.push('/mestablishment')
     },
     async acceptedSMS () {
       await(ax.post("https://api.twilio.com/2010-04-01/Accounts/" + 'ACcc90b2082a8b8dac1caf4497e5826e7a' + "/Messages.json", q.stringify({
-        Body: 'Your Pagdumala Account Request has been approved',
+        Body: 'Your Pagdumala Account Request has been approved.',
         From: '(435) 241-3632',
         To: '+63' + this.user.contact
       }), {
@@ -69,13 +69,13 @@ export default {
 
     async rejectedSMS () {
       await(ax.post("https://api.twilio.com/2010-04-01/Accounts/" + 'ACcc90b2082a8b8dac1caf4497e5826e7a' + "/Messages.json", q.stringify({
-        Body: 'Unfortunately, your Pagdumala Account Request has been rejected',
+        Body: 'Unfortunately, your Pagdumala Account Request has been rejected.',
         From: '(435) 241-3632',
         To: '+63' + this.user.contact
       }), {
         auth: {
           username: 'ACcc90b2082a8b8dac1caf4497e5826e7a',
-          password: '4c7fe81f0c8f549b14aadb9b19bd3ad8'
+          password: '52d0f504e9eb1da4a92e4e603bd6df2a'
         }
       }));
       this.decided = true
