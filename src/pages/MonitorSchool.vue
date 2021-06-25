@@ -7,26 +7,11 @@
     <div>
       <div class="q-pa-xs">
         <q-table
-          class="rowSchool"
           :data="data"
           :columns="columns"
           row-key="name"
           @row-click="onRowClick"
         >
-        <template v-slot:body="props">
-        <q-tr :props="props">
-          <q-td
-            v-for="(col) in props.cols"
-            :key="col.name"
-            :props="props"
-          >
-            {{ col.value }}
-          </q-td>
-          <q-td>
-            <q-btn flat round color = "red" icon = "delete" @click="deleteRoom(props.row)"/>
-          </q-td>
-        </q-tr>
-      </template>
         </q-table>
       </div>
     </div>
@@ -39,63 +24,16 @@
           </span>
       </div>
     </div>
+
     <div>
       <div class="q-pa-xs">
-      <q-table
-        :data="studentData"
-        :columns="roomColumns"
-        row-key="name"
-      >
-      <template v-slot:body="props">
-          <q-tr :props="props">
-            <q-td
-              v-for="(col) in props.cols"
-              :key="col.name"
-              :props="props"
-            >
-              {{ col.value }}
-            </q-td>
-            <q-td>
-              <q-toggle
-                v-model="props.row.riskState"
-                color="teal"
-                icon="mail"
-                label=""
-              />
-            </q-td>
-            <q-td>
-              <q-toggle
-                v-model="props.row.riskState"
-                color="teal"
-                icon="mail"
-                label=""
-              />
-            </q-td>
-            <q-td>
-              <q-toggle
-                v-model="props.row.riskState"
-                color="teal"
-                icon="mail"
-                label=""
-              />
-            </q-td>
-            <q-td>
-              <q-toggle
-                v-model="props.row.mail"
-                color="teal"
-                icon="mail"
-                label=""
-              />
-            </q-td>
-            <q-td>
-              <q-btn v-if="props.row.mail == 1" flat round color = "red" icon = "mail" size ="md "  @click="deleteUser(props.row)"/>
-            </q-td>
-            <q-td>
-              <q-btn flat round color = "red" icon = "delete" size ="md "  @click="deleteUser(props.row.key)"/>
-            </q-td>
-          </q-tr>
-        </template>
-      </q-table>
+        <q-table
+          :data="studentData"
+          :columns="roomColumns"
+          row-key="name"
+          @row-click="onRowClick"
+        >
+        </q-table>
       </div>
     </div>
   </div>
@@ -121,27 +59,15 @@ export default {
         { name: 'timein', label: 'Time In', field: 'timein' },
         { name: 'logout', label: 'Time Out', field: 'logout' },
         { name: 'date', label: 'Teacher', field: 'date', align: 'center' },
-        { align: 'center', label: '', field: 'timeStamp' },
       ],
       roomColumns: [
-        {
-          name: 'name',
-          required: true,
-          label: 'Name',
-          align: 'left',
-          field: row => row.name,
-          format: name => `${name}`
-        },
-        { name: 'age', align: 'center', label: 'Age', field: 'age' },
-        { name: 'address', align: 'center', label: 'Address', field: 'address' },
-        { name: 'contact', align: 'center', label: 'Contact No.', field: 'contact' },
-        { name: 'timeStamp', align: 'center', label: 'Time Stamp', field: 'timeStamp' },
-        { align: 'center', label: 'Low Risk', field: '' },
-        { align: 'center', label: 'Moderate Risk', field: '' },
-        { align: 'center', label: 'High Risk', field: '' },
-        { align: 'center', label: 'Mail', field: 'timeStamp' },
-        { align: 'center', label: '', field: 'timeStamp' },
-        
+        { align: 'center', label: 'Name', field: 'name' },
+        { align: 'center', label: 'Age', field: 'age' },
+        { align: 'center', label: 'Address', field: 'address' },
+        { align: 'center', label: 'Contact No.', field: 'contact' },
+        { align: 'center', label: 'Time Stamp', field: 'timeStamp' },
+        { align: 'center', label: 'Low Risk' },
+        { align: 'center', label: 'High Risk' }
       ],
       studentData:   [],
       display: false,
@@ -180,37 +106,25 @@ export default {
     }
   },
   methods: {
-    hemlo () {
-    },
-    deleteUser (id) {
-      alert(id)
-    },
-
-    deleteRoom (key) {
-      alert(key.name)
-      let index = this.data.indexOf(key)
-      firebaseDb.ref('rooms/' + key.id).remove()
-      this.data.splice(index, 1)
-    },
-
     onRowClick (evt, row) {
       this.display = true;
 
       var rooms = []
-      var roomsRef = firebaseDb.ref('rooms/' + row.key + '/students')
+      var roomsRef = firebaseDb.ref('users/' + 'hxs2enq2CqSB1ii60ZdeIvUioj72' + '/rooms/' + row.key + '/students')
       roomsRef.once('value', function (snapshot) {
       snapshot.forEach(function (childSnapshot) {
           var room = childSnapshot.val()
           var date = new Date(parseInt(room.date)).toString()
-          rooms.push({ name: room.name, age: room.age, address: room.address, contact: room.contact, timeStamp: date, key: childSnapshot.key, mail: room.risk_state })
+          rooms.push({ name: room.name, age: room.age, address: room.address, contact: room.contact, timeStamp: date, key: childSnapshot.key })
           })
       })
       this.studentData = rooms
+
     }
   },
   mounted () {
     var rooms = []
-    var roomsRef = firebaseDb.ref('rooms')
+    var roomsRef = firebaseDb.ref('users/' + 'hxs2enq2CqSB1ii60ZdeIvUioj72' + '/rooms')
     roomsRef.once('value', function (snapshot) {
       snapshot.forEach(function (childSnapshot) {
         var room = childSnapshot.val()

@@ -2,8 +2,7 @@
 
     <q-page class="bg-teal column justify-center items-center">
 
-        <q-img src="~assets/lolz.jpg" class="menu-image fixed-center" />
-
+      <q-img src="~assets/lolz.jpg" class="menu-image fixed-center" />
 
       <div class="row q-pa-md">
         <q-btn-dropdown color="teal" :label="date">
@@ -44,7 +43,6 @@
                 :data="displayData"
                 :columns="columns"
                 row-key="name"
-                hide-bottom
                 >
                 </q-table>
             </div>
@@ -55,6 +53,7 @@
 </template>
 
 <script>
+
 import { firebaseDb } from 'src/boot/firebase'
 export default { 
   data () {
@@ -69,7 +68,7 @@ export default {
       letMeKnow() {
         let x = []
         for(let i = 0; i < this.data.length; i++){
-          if(this.data[i].day == this.date){
+          if(this.data[i].day === this.date){
             x.push(this.data[i])
           }
         }
@@ -101,45 +100,24 @@ export default {
           storeName: '',
           key: ''
       },
-      // {
-      //     storeName: 'JUSSWAA',
-      //     key: '19,23123'
-      // }
       ]
     }
   },
   methods: {
-      updateDisplay ( ){
-        alert('Hemlo World')
-      },
+
       onSelectEstablishment (est_key) {
         let temp = this.date
         this.date = ''
         this.date = temp
-        //   firebaseDb.ref('users/' + est_key + '/customers').push({
-        //     date: '1622581502725',
-        //     contact: '09123456789',
-        //     address: 'Iligan City',
-        //     age: '20',
-        //     name: 'Kenan Cinches'
-        //  })
-        //     firebaseDb.ref('users/' + est_key + '/customers').push({
-        //     date: '1622581502725',
-        //     contact: '09987654321',
-        //     address: 'Pagadian City',
-        //     age: '20',
-        //     name: 'Trisha Juntado'
-        //  })
         var current_Est
         var estRef = firebaseDb.ref('users/' + est_key + '/name');
         estRef.on('value', (snapshot) => {
             this.chosen = snapshot.val();
         })
-        
         var rooms = []
         var roomsRef = firebaseDb.ref('users/' + est_key + '/customers')
-        roomsRef.once('value', function (snapshot) {
-        snapshot.forEach(function (childSnapshot) {
+        roomsRef.once('value', snapshot => {
+          snapshot.forEach(childSnapshot => {
             var room = childSnapshot.val()
             var rye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(room.date);
             var rmo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(room.date);
@@ -148,7 +126,7 @@ export default {
             rooms.push({ name: room.name, age: room.age, address: room.address, contact: room.contact, timeStamp: room.date, key: childSnapshot.key, day: daye })
             })
         })
-        this.data = rooms
+        this.data = rooms 
       }
   },
   mounted () {
@@ -157,7 +135,8 @@ export default {
     roomsRef.once('value', function (snapshot) {
       snapshot.forEach(function (childSnapshot) {
         var room = childSnapshot.val()
-        rooms.push({ storeName: room.name, key: childSnapshot.key })
+        if(room.type != 'School')
+          rooms.push({ storeName: room.name, key: childSnapshot.key })
       })
     })
     this.d = Date.now()

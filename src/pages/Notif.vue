@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import { firebaseDb } from 'src/boot/firebase'
 import ax from 'axios'
 import q from 'qs'
@@ -47,11 +48,13 @@ export default {
   },
 
   methods: {
+
+    ...mapActions('store', ['registerUser']),
+
     deleteRequest () {
-      firebaseDb.ref('dummy_cookie/' + this.chosen).remove()
-      firebaseDb.ref('requests/' + this.chosen).remove()
       this.$router.push('/mestablishment')
     },
+
     async acceptedSMS () {
       await(ax.post("https://api.twilio.com/2010-04-01/Accounts/" + 'ACcc90b2082a8b8dac1caf4497e5826e7a' + "/Messages.json", q.stringify({
         Body: 'Your Pagdumala Account Request has been approved.',
@@ -60,11 +63,13 @@ export default {
       }), {
         auth: {
           username: 'ACcc90b2082a8b8dac1caf4497e5826e7a',
-          password: '4c7fe81f0c8f549b14aadb9b19bd3ad8'
+          password: '52d0f504e9eb1da4a92e4e603bd6df2a'
         }
       }));
+      this.registerUser(this.user)
+      firebaseDb.ref('dummy_cookie/' + this.chosen).remove()
+      firebaseDb.ref('requests/' + this.chosen).remove()
       this.decided = true
-
     },
 
     async rejectedSMS () {
@@ -78,8 +83,9 @@ export default {
           password: '52d0f504e9eb1da4a92e4e603bd6df2a'
         }
       }));
+      firebaseDb.ref('dummy_cookie/' + this.chosen).remove()
+      firebaseDb.ref('requests/' + this.chosen).remove()
       this.decided = true
-
     }
   },
   mounted () {
@@ -88,17 +94,17 @@ export default {
         this.chosen = snapshot.val()
         var userRef = firebaseDb.ref('requests/' + this.chosen)
         userRef.on('value', snapshot => {
-        let details = snapshot.val()
-        this.user = ({
-          name: details.name,
-          type: details.type,
-          level: details.level,
-          contact: details.contact,
-          contact1: details.contact1,
-          address: details.address,
-          email: details.email,
-          password: details.password
-        })
+          let details = snapshot.val()
+          this.user = ({
+            name: details.name,
+            type: details.type,
+            level: details.level,
+            contact: details.contact,
+            contact1: details.contact1,
+            address: details.address,
+            email: details.email,
+            password: details.password
+          })
       })
     })
   }

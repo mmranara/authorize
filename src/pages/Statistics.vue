@@ -34,19 +34,19 @@
 
     
 
-      <q-card class="">
+      <q-card class="fit">
         <div class="text-h5 q-ma-md row justify-center items-center">{{ chosen }}</div>
         <div
           class="row q-col-gutter-md q-px-md q-py-md"
           key="allCharts"
         >
-          <q-card class="q-ma-md q-pa-xl">
+          <q-card class="q-ma-md fit q-pa-xl">
             <div class="col-md-6 col-sm-12 col-xs-12">
                 <apex-donut></apex-donut>
             </div>
           </q-card>
 
-          <q-card class="q-ma-md q-pa-xl">
+          <q-card class="q-ma-md fit q-pa-xl">
             <div class="col-md-6 col-sm-12 col-xs-12">
                 <apex-area></apex-area>
             </div>
@@ -125,22 +125,9 @@ export default {
   },
   methods: {
     onSelectEstablishment (est_key) {
-        //   firebaseDb.ref('users/' + est_key + '/customers').push({
-        //     date: '1622581502725',
-        //     contact: '09123456789',
-        //     address: 'Iligan City',
-        //     age: '20',
-        //     name: 'Kenan Cinches'
-        //  })
-        //     firebaseDb.ref('users/' + est_key + '/customers').push({
-        //     date: '1622581502725',
-        //     contact: '09987654321',
-        //     address: 'Pagadian City',
-        //     age: '20',
-        //     name: 'Trisha Juntado'
-        //  })
       var current_Est
       var estRef = firebaseDb.ref('users/' + est_key + '/name');
+      firebaseDb.ref('stat_auth_cookie').set(est_key)
       estRef.on('value', (snapshot) => {
           this.chosen = snapshot.val();
       })

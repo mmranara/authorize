@@ -144,15 +144,14 @@ export default {
     }
   },
   mounted () {
-    var rooms = []
     var roomsRef = firebaseDb.ref('requests')
-    roomsRef.on('value', function (snapshot) {
-      snapshot.forEach(function (childSnapshot) {
+    roomsRef.on('value',  snapshot => {
+      this.notifs = []
+      snapshot.forEach( childSnapshot => {
         var room = childSnapshot.val()
-        rooms.push({ name: room.name, key: childSnapshot.key })
+        this.notifs.push({ name: room.name, key: childSnapshot.key })
       })
     })
-    this.notifs = rooms
   }
 }
 </script>
