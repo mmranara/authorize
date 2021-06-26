@@ -28,7 +28,7 @@
       </div>
 
         <div class="row">
-        <q-card square class="shadow-24" style="width:1000px;height:;">
+        <q-card fit square class="shadow-24" style="">
             <div class="col-12 q-pa-md bg-teal-10 text-white text-center">
                 <span class="text-h6 ">
                 Establishments
@@ -37,16 +37,63 @@
 
             <div class="col-12 q-pt-lg text-center text-blue-grey-10">
             </div>
-
-            <div class="q-pa-xs">
+              <div class="q-pa-xs">
                 <q-table
                 :data="displayData"
-                :columns="columns"
+                :columns="roomColumns"
                 row-key="name"
                 >
+                <template v-slot:body="props">
+                  <q-tr :props="props">
+                    <q-td
+                      v-for="(col) in props.cols"
+                      :key="col.name"
+                      :props="props"
+                    >
+                      {{ col.value }}
+                    </q-td>
+                    <q-td>
+                      <q-toggle
+                        v-model="risk[0]"
+                        color="teal"
+                        icon="mail"
+                        label=""
+                      />
+                    </q-td>
+                    <q-td>
+                      <q-toggle
+                        v-model="risk[1]"
+                        color="teal"
+                        icon="mail"
+                        label=""
+                      />
+                    </q-td>
+                    <q-td>
+                      <q-toggle
+                        v-model="risk[2]"
+                        color="teal"
+                        icon="mail"
+                        label=""
+                      />
+                    </q-td>
+                    <q-td>
+                      <q-toggle
+                        v-model="props.row.mail"
+                        color="teal"
+                        icon="mail"
+                        label=""
+                      />
+                    </q-td>
+                    <q-td>
+                      <q-btn v-if="props.row.mail == 1" flat round color = "red" icon = "mail" size ="md "  @click="deleteUser(props.row)"/>
+                    </q-td>
+                    <q-td>
+                      <q-btn flat round color = "red" icon = "delete" size ="md "  @click="deleteUser(props.row.key)"/>
+                    </q-td>
+                  </q-tr>
+                </template>
                 </q-table>
             </div>
-            
         </q-card>
         </div>
   </q-page>
@@ -83,18 +130,48 @@ export default {
       },
       search: '',
       columns: [
-        { align: 'center', label: 'Name', field: 'name' },
+        {
+          name: 'name',
+          required: true,
+          label: 'Name',
+          align: 'left',
+          field: row => row.name,
+          format: name => `${name}`
+        },
         { align: 'center', label: 'Age', field: 'age' },
         { align: 'center', label: 'Address', field: 'address' },
         { align: 'center', label: 'Contact No.', field: 'contact' },
         { align: 'center', label: 'Time Stamp', field: 'timeStamp' },
         { align: 'center', label: 'Low Risk', field: '' },
         { align: 'center', label: 'Moderate Risk', field: '' },
-        { align: 'center', label: 'High Risk', field: '' }
+        { align: 'center', label: 'High Risk', field: '' },
+        { align: 'center', label: 'Mail', field: 'timeStamp' },
+        { align: 'center', label: '', field: 'timeStamp' },
+      ],
+
+      roomColumns: [
+        {
+          name: 'name',
+          required: true,
+          label: 'Name',
+          align: 'left',
+          field: row => row.name,
+          format: name => `${name}`
+        },
+        { name: 'age', align: 'center', label: 'Age', field: 'age' },
+        { name: 'address', align: 'center', label: 'Address', field: 'address' },
+        { name: 'contact', align: 'center', label: 'Contact No.', field: 'contact' },
+        { name: 'timeStamp', align: 'center', label: 'Time Stamp', field: 'timeStamp' },
+        { align: 'center', label: 'Low Risk', field: '' },
+        { align: 'center', label: 'Moderate Risk', field: '' },
+        { align: 'center', label: 'High Risk', field: '' },
+        { align: 'center', label: 'Mail', field: 'timeStamp' },
+        { align: 'center', label: '', field: 'timeStamp' },
       ],
 
       chosen: "Choose Establishment",
-
+      
+      risk: [],
       establishments: [
       {
           storeName: '',
@@ -105,11 +182,21 @@ export default {
   },
   methods: {
 
+      hemlo () {
+      },
+
+      deleteUser (id) {
+      },
+
+      deleteRoom (key) {
+        let index = this.data.indexOf(key)
+        firebaseDb.ref('users/' + key.id + '/customers').remove()
+      },
+
       onSelectEstablishment (est_key) {
         let temp = this.date
         this.date = ''
         this.date = temp
-        var current_Est
         var estRef = firebaseDb.ref('users/' + est_key + '/name');
         estRef.on('value', (snapshot) => {
             this.chosen = snapshot.val();
@@ -123,10 +210,11 @@ export default {
             var rmo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(room.date);
             var rda = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(room.date);
             var daye = `${rye}/${rmo}/${rda}`
-            rooms.push({ name: room.name, age: room.age, address: room.address, contact: room.contact, timeStamp: room.date, key: childSnapshot.key, day: daye })
+            var hakdog = new Date(parseInt(room.date)).toString()
+            rooms.push({ name: room.name, age: room.age, address: room.address, contact: room.contact, timeStamp: hakdog, key: childSnapshot.key, day: daye })
             })
         })
-        this.data = rooms 
+        this.data = rooms
       }
   },
   mounted () {

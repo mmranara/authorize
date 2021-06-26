@@ -42,13 +42,13 @@
         >
           <q-card class="q-ma-md fit q-pa-xl">
             <div class="col-md-6 col-sm-12 col-xs-12">
-                <apex-donut></apex-donut>
+                <apex-donut :key="componentKey"></apex-donut>
             </div>
           </q-card>
 
           <q-card class="q-ma-md fit q-pa-xl">
             <div class="col-md-6 col-sm-12 col-xs-12">
-                <apex-area></apex-area>
+                <apex-area :key="componentKey"></apex-area>
             </div>
           </q-card>
         </div>
@@ -61,6 +61,7 @@
 import CardBase from 'components/CardBase'
 import { mapState, mapActions } from 'vuex'
 import { firebaseDb } from 'src/boot/firebase'
+import Vue from 'vue';
 export default {
   name: 'PageIndex',
   components: {
@@ -109,6 +110,7 @@ export default {
       ],
       studentData:   [],
       display: false,
+      componentKey: 0,
       data: [
       ],
       searchModel: '',
@@ -120,6 +122,7 @@ export default {
       },]
     }
   },
+  
   computed: {
     ...mapState('store', ['userDetails'])
   },
@@ -127,9 +130,10 @@ export default {
     onSelectEstablishment (est_key) {
       var current_Est
       var estRef = firebaseDb.ref('users/' + est_key + '/name');
-      firebaseDb.ref('stat_auth_cookie').set(est_key)
       estRef.on('value', (snapshot) => {
+          firebaseDb.ref('stat_auth_cookie').set(est_key)
           this.chosen = snapshot.val();
+          
       })
       
       var rooms = []
@@ -142,10 +146,16 @@ export default {
           })
       })
       this.data = rooms
+      this.forceRerender()
     },
+
+    forceRerender() {
+      this.componentKey += 1;
+    }
 
   },
   mounted () {
+    
     var rooms = []
     var roomsRef = firebaseDb.ref('users')
     roomsRef.once('value', function (snapshot) {
