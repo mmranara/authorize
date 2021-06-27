@@ -61,7 +61,7 @@
 import CardBase from 'components/CardBase'
 import { mapState, mapActions } from 'vuex'
 import { firebaseDb } from 'src/boot/firebase'
-import Vue from 'vue';
+import Vue from 'vue'
 export default {
   name: 'PageIndex',
   components: {
@@ -114,7 +114,7 @@ export default {
       data: [
       ],
       searchModel: '',
-      chosen: "Choose Establishment",
+      chosen: "All",
       establishments: [
       {
         storeName: '',
@@ -122,18 +122,16 @@ export default {
       },]
     }
   },
-  
+
   computed: {
     ...mapState('store', ['userDetails'])
   },
   methods: {
     onSelectEstablishment (est_key) {
-      var current_Est
       var estRef = firebaseDb.ref('users/' + est_key + '/name');
       estRef.on('value', (snapshot) => {
-          firebaseDb.ref('stat_auth_cookie').set(est_key)
+          firebaseDb.ref('stat_auth_cookie').set({id: est_key, name: snapshot.val()})
           this.chosen = snapshot.val();
-          
       })
       
       var rooms = []
@@ -148,18 +146,20 @@ export default {
       this.data = rooms
       this.forceRerender()
     },
-
     forceRerender() {
-      this.componentKey += 1;
+      this.componentKey += 1
     }
 
   },
   mounted () {
-    
+    var ref = firebaseDb.ref("stat_auth_cookie")
+    ref.on('value', snapshot => {
+      this.chosen = snapshot.val().name
+    })
     var rooms = []
     var roomsRef = firebaseDb.ref('users')
-    roomsRef.once('value', function (snapshot) {
-      snapshot.forEach(function (childSnapshot) {
+    roomsRef.on('value',  snapshot => {
+      snapshot.forEach( childSnapshot => {
         var room = childSnapshot.val()
         rooms.push({ storeName: room.name, key: childSnapshot.key })
       })  
@@ -170,7 +170,8 @@ export default {
     this.mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(this.d);
     this.da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(this.d);
     this.date = `${this.ye}/${this.mo}/${this.da}`
-    this.renderChart(this.chartdata, this.options)
   }
+  
+  
 }
 </script>

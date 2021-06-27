@@ -56,7 +56,7 @@ export default {
   mounted () {
     var ref = firebaseDb.ref("stat_auth_cookie")
     ref.on('value', snapshot => {
-        this.id = snapshot.val()
+        this.id = snapshot.val().id
     })
     var ref = firebaseDb.ref('users/' + this.id + '/customers')
     ref.on('value', snapshot => {
