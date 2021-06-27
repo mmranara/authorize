@@ -63,7 +63,6 @@ const actions = {
         dispatch('firebaseUpdateUser', {
           userId: userId,
           updates: {
-            online: true
           }
         })
         this.$router.push('/mestablishment')
@@ -72,7 +71,6 @@ const actions = {
         dispatch('firebaseUpdateUser', {
           userId: state.userDetails.userId,
           updates: {
-            online: false
           }
         })
         commit('setUserDetails', {})

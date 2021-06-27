@@ -19,6 +19,25 @@
           row-key="name"
           @row-click="onRowClick"
         >
+
+        <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td
+              v-for="(col) in props.cols"
+              :key="col.name"
+              :props="props"
+            >
+              {{ col.value }}
+            </q-td>
+            <q-td>
+              <q-btn color = "teal" label="See Students" size ="md "  @click="onRowClick(props.row)"/>
+            </q-td>
+            <q-td>
+              <q-btn flat round color = "red" icon = "delete" size ="md "  @click="deleteRoom(props.row.key)"/>
+            </q-td>
+          </q-tr>
+        </template>
+
         </q-table>
 
       </div>
@@ -53,7 +72,7 @@
             </q-td>
             <q-td>
               <q-toggle
-                v-model="risk[0]"
+                v-model="props.row.risk"
                 color="teal"
                 icon="mail"
                 label=""
@@ -61,7 +80,7 @@
             </q-td>
             <q-td>
               <q-toggle
-                v-model="risk[1]"
+                v-model="props.row.risk1"
                 color="teal"
                 icon="mail"
                 label=""
@@ -69,7 +88,7 @@
             </q-td>
             <q-td>
               <q-toggle
-                v-model="risk[2]"
+                v-model="props.row.risk2"
                 color="teal"
                 icon="mail"
                 label=""
@@ -136,6 +155,8 @@ export default {
         { name: 'timein', label: 'Time In', field: 'timein' },
         { name: 'logout', label: 'Time Out', field: 'logout' },
         { name: 'date', label: 'Teacher', field: 'date', align: 'center' },
+        {  label: '', field: 'date', align: 'center' },
+        {  label: '', field: 'date', align: 'center' },
       ],
       roomColumns: [
         {
@@ -168,25 +189,23 @@ export default {
     },
 
     deleteUser (id) {
+
     },
 
     deleteRoom (key) {
-      let index = this.data.indexOf(key)
-      firebaseDb.ref('users/' + 'hxs2enq2CqSB1ii60ZdeIvUioj72' + '/rooms/' + key.id).remove()
+      firebaseDb.ref('users/' + 'hxs2enq2CqSB1ii60ZdeIvUioj72' + '/rooms/' + key).remove()
     },
-    onRowClick (evt, row) {
+    onRowClick (row) {
       this.display = true;
-
-      var rooms = []
       var roomsRef = firebaseDb.ref('users/' + 'hxs2enq2CqSB1ii60ZdeIvUioj72' + '/rooms/' + row.key + '/students')
-      roomsRef.once('value', function (snapshot) {
-      snapshot.forEach(function (childSnapshot) {
+      roomsRef.on('value', snapshot => {
+      this.studentData = []
+      snapshot.forEach(childSnapshot => {
           var room = childSnapshot.val()
           var date = new Date(parseInt(room.date)).toString()
-          rooms.push({ name: room.name, age: room.age, address: room.address, contact: room.contact, timeStamp: date, key: childSnapshot.key })
+          this.studentData.push({ name: room.name, age: room.age, address: room.address, contact: room.contact, timeStamp: date, key: childSnapshot.key })
           })
       })
-      this.studentData = rooms
     }
   },
 
@@ -195,13 +214,13 @@ export default {
   mounted () {
     var rooms = []
     var roomsRef = firebaseDb.ref('users/' + 'hxs2enq2CqSB1ii60ZdeIvUioj72' + '/rooms')
-    roomsRef.on('value', function (snapshot) {
-      snapshot.forEach(function (childSnapshot) {
+    roomsRef.on('value', snapshot => {
+      this.data = []
+      snapshot.forEach(childSnapshot => {
         var room = childSnapshot.val()
-        rooms.push({ name: room.room_num, date: room.teacher, timein: room.time_in, logout: room.time_out, key: childSnapshot.key, room_history: 'Room History' })
+        this.data.push({ name: room.room_num, date: room.teacher, timein: room.time_in, logout: room.time_out, key: childSnapshot.key, room_history: 'Room History' })
       })
     })
-    this.data = rooms
     this.d = Date.now()
     this.ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(this.d);
     this.mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(this.d);

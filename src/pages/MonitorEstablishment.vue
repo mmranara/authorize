@@ -12,7 +12,7 @@
         </q-btn-dropdown>
 
           <div class="q-pa-md">
-              <q-btn-dropdown color="teal" :label="chosen">
+              <q-btn-dropdown color="teal" :label="chosen.name">
               <q-list>
                   <q-item
                   v-for = "stores in establishments"
@@ -85,7 +85,7 @@
                       />
                     </q-td>
                     <q-td>
-                      <q-btn v-if="props.row.mail == 1" flat round color = "red" icon = "mail" size ="md "  @click="deleteUser(props.row)"/>
+                      <q-btn v-if="props.row.mail == 1" flat round color = "red" icon = "mail" size ="md "  @click="deleteUser(props.row.key)"/>
                     </q-td>
                     <q-td>
                       <q-btn flat round color = "red" icon = "delete" size ="md "  @click="deleteUser(props.row.key)"/>
@@ -169,7 +169,7 @@ export default {
         { align: 'center', label: '', field: 'timeStamp' },
       ],
 
-      chosen: "Choose Establishment",
+      chosen: {name: "Choose Establishment"},
       
       risk: [],
       establishments: [
@@ -185,11 +185,12 @@ export default {
       hemlo () {
       },
 
-      deleteUser (id) {
+      deleteUser (key) {
+        firebaseDb.ref('users/' + this.chosen.key + '/customers/' + key).remove()
+        alert(this.chosen.key)
       },
 
       deleteRoom (key) {
-        let index = this.data.indexOf(key)
         firebaseDb.ref('users/' + key.id + '/customers').remove()
       },
 
@@ -197,13 +198,13 @@ export default {
         let temp = this.date
         this.date = ''
         this.date = temp
-        var estRef = firebaseDb.ref('users/' + est_key + '/name');
+        var estRef = firebaseDb.ref('users/' + est_key );
         estRef.on('value', (snapshot) => {
-            this.chosen = snapshot.val();
+            this.chosen = {name: snapshot.val().name, key: est_key};
         })
-        var rooms = []
         var roomsRef = firebaseDb.ref('users/' + est_key + '/customers')
-        roomsRef.once('value', snapshot => {
+        roomsRef.on('value', snapshot => {
+          this.data = []
           snapshot.forEach(childSnapshot => {
             var room = childSnapshot.val()
             var rye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(room.date);
@@ -211,20 +212,20 @@ export default {
             var rda = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(room.date);
             var daye = `${rye}/${rmo}/${rda}`
             var hakdog = new Date(parseInt(room.date)).toString()
-            rooms.push({ name: room.name, age: room.age, address: room.address, contact: room.contact, timeStamp: hakdog, key: childSnapshot.key, day: daye })
+            this.data.push({ name: room.name, age: room.age, address: room.address, contact: room.contact, timeStamp: hakdog, key: childSnapshot.key, day: daye })
             })
+          this.letMeKnow();
         })
-        this.data = rooms
       }
   },
-  mounted () {
-    var rooms = []
+  mounted () {   
     var roomsRef = firebaseDb.ref('users')
-    roomsRef.once('value', function (snapshot) {
-      snapshot.forEach(function (childSnapshot) {
+    roomsRef.on('value', snapshot => {
+      this.establishments = []
+      snapshot.forEach(childSnapshot => {
         var room = childSnapshot.val()
         if(room.type != 'School')
-          rooms.push({ storeName: room.name, key: childSnapshot.key })
+          this.establishments.push({ storeName: room.name, key: childSnapshot.key })
       })
     })
     this.d = Date.now()
@@ -232,7 +233,6 @@ export default {
     this.mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(this.d);
     this.da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(this.d);
     this.date = `${this.ye}/${this.mo}/${this.da}`
-    this.establishments = rooms
   }
 }
 </script>
