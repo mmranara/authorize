@@ -22,7 +22,6 @@ const actions = {
           contact1: payload.contact1,
           address: payload.address,
           email: payload.email,
-          online: true
         })
       })
       .catch(error => {
