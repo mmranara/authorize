@@ -77,11 +77,3 @@ export default {
   }
 }
 </script>
-
-<style lang="sass">
-.menu-image
-  height: 100%
-  opacity: 0.2
-  filter: grayscale(100%)
-
-</style>

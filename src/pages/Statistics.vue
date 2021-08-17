@@ -1,116 +1,177 @@
 <template>
-  <q-page class="bg-teal row justify-center items-center">
-    <q-img src="~assets/lolz.jpg" class="menu-image fixed-center" />
-    <div>
+    <q-page class="container">
+    
+   <div class="q-pa-md">
+
+      <div class="q-gutter-md q-mb-lg column" style="max-width: 500px">
+        <q-input class="" v-model="searchModel" label="Search" color="teal"/>
+      </div>
+
       <div class="row">
-        <q-card square class="shadow-24" style="width:330px;height:510px;">
+        <q-btn-dropdown color="teal" :label="date">
+          <div class="q-gutter-md col items-start">
+            <q-date color="teal" v-model="date" />
+          </div>
+        </q-btn-dropdown>
 
-      <div class="col-12 q-pa-md bg-teal-10 text-white text-center">
-        <span class="text-h6 ">
-          COVID-19 Updates
-        </span>
+        <q-btn-dropdown class = "q-ml-md" color="teal" :label="chosen">
+        <q-list>
+            <q-item
+              v-for = "stores in establishments"
+              :key="stores.key"
+              clickable v-close-popup @click="onSelectEstablishment(stores.key)">
+            <q-item-section>
+                <q-item-label>{{stores.storeName}}</q-item-label>
+            </q-item-section>
+            </q-item>
+        </q-list>
+        </q-btn-dropdown>
       </div>
 
-    <div class="col-12 q-pt-lg text-center text-blue-grey-10">
-        <span class="text-weight-bolder">
-          Northern Mindanao Cases
-        </span>
-    </div>
-    <div class="q-pa-xs">
-    <q-table
-      :data="data1"
-      :columns="columns1"
-      row-key="name"
-      hide-bottom/>
-    </div>
+     <div>
+        <q-separator dark inset /><q-separator dark inset /><q-separator dark inset /><q-separator dark inset /><q-separator dark inset /><q-separator dark inset />
+     </div>
 
-<gb-flag
-    code="fr"
-    size="small"
-  />
-    <div class="col-12 q-pt-xs text-center text-blue-grey-10">
-        <q-btn flat round color="primary" icon="flag-outline" />
-        <span class="text-weight-bolder">
-          Philippines Cases
-        </span>
-    </div>
-    <div class="q-pa-xs">
-    <q-table
-      :data="data2"
-      :columns="columns2"
-      row-key="name"
-      hide-bottom/>
-    </div>
+    
 
-    <div class="col-12 q-pt-xs text-center text-blue-grey-10">
-        <q-btn flat round color="primary" icon="globe-outline" />
-        <span class="text-weight-bolder">
-          Worldwide Cases
-        </span>
-    </div>
-    <div class="q-pa-xs">
-    <q-table
-      :data="data3"
-      :columns="columns3"
-      row-key="name"
-      hide-bottom/>
-    </div>
+      <q-card class="fit">
+        <div class="text-h5 q-ma-md row justify-center items-center">{{ chosen }}</div>
+        <div
+          class="row q-col-gutter-md q-px-md q-py-md"
+          key="allCharts"
+        >
+          <q-card class="q-ma-md fit q-pa-xl">
+            <div class="col-md-6 col-sm-12 col-xs-12">
+                <apex-donut :key="componentKey"></apex-donut>
+            </div>
+          </q-card>
 
-        </q-card>
-      </div>
+          <q-card class="q-ma-md fit q-pa-xl">
+            <div class="col-md-6 col-sm-12 col-xs-12">
+                <apex-area :key="componentKey"></apex-area>
+            </div>
+          </q-card>
+        </div>
+      </q-card>
     </div>
-
-      <q-footer >
-      <q-tabs class="bg-teal-10" style="height:50px;">
-        <q-route-tab to="/stat" label="Age Group" style="width:100%;height:60px;"/>
-        <q-route-tab to="" label="Tag Status"  style="width:100%;height:60px;"/>
-      </q-tabs>
-
-  </q-footer>
   </q-page>
 </template>
 
 <script>
+import CardBase from 'components/CardBase'
+import { mapState, mapActions } from 'vuex'
+import { firebaseDb } from 'src/boot/firebase'
+import Vue from 'vue'
 export default {
+  name: 'PageIndex',
+  components: {
+    ApexArea: () => import('components/ApexArea'),
+    ApexDonut: () => import('components/ApexDonut')
+  },
   data () {
     return {
-      columns1: [
-        { field: 'name1', label: 'Confirmed', align: 'center', headerClasses: 'text-red-10' },
-        { align: 'center', label: 'Recovered', field: 'name2', headerClasses: 'text-green' },
-        { align: 'center', label: 'Deaths', field: 'name3' }
-      ],
-      columns2: [
-        { field: 'name1', label: 'Confirmed', align: 'center', headerClasses: 'text-red-10' },
-        { align: 'center', label: 'Recovered', field: 'name2', headerClasses: 'text-green' },
-        { align: 'center', label: 'Deaths', field: 'name3' }
-      ],
-      columns3: [
-        { field: 'name1', label: 'Confirmed', align: 'center', headerClasses: 'text-red-10' },
-        { align: 'center', label: 'Recovered', field: 'name2', headerClasses: 'text-green' },
-        { align: 'center', label: 'Deaths', field: 'name3' }
-      ],
-      data1: [
+      d: '',
+      ye: '',
+      mo: '',
+      da: '',
+      date: '',
+      search: '',
+      columns: [
         {
-          name1: '19,093',
-          name2: '16,578',
-          name3: '350'
-        }
+          name: 'name',
+          required: true,
+          label: 'Room',
+          align: 'left',
+          field: row => row.name,
+          format: name => `${name}`
+        },
+        { name: 'timein', label: 'Time In', field: 'timein' },
+        { name: 'logout', label: 'Time Out', field: 'logout' },
+        { name: 'date', label: 'Teacher', field: 'date', align: 'center' },
       ],
-      data2: [
+      roomColumns: [
         {
-          name1: '1,193,976',
-          name2: '1,131,942',
-          name3: '20,169'
-        }
+          name: 'name',
+          required: true,
+          label: 'Name',
+          align: 'left',
+          field: row => row.name,
+          format: name => `${name}`
+        },
+        { name: 'age', align: 'center', label: 'Age', field: 'age' },
+        { name: 'address', align: 'center', label: 'Address', field: 'address' },
+        { name: 'contact', align: 'center', label: 'Contact No.', field: 'contact' },
+        { name: 'timeStamp', align: 'center', label: 'Time Stamp', field: 'timeStamp' },
+        { align: 'center', label: 'Low Risk', field: '' },
+        { align: 'center', label: 'Moderate Risk', field: '' },
+        { align: 'center', label: 'High Risk', field: '' },
+        { align: 'center', label: 'Mail', field: 'timeStamp' },
+        { align: 'center', label: '', field: 'timeStamp' },
       ],
-      data3: [
-        {
-          name1: '167,951,168',
-          name2: 'No Data',
-          name3: '3,488,242'
-        }
-      ]
+      studentData:   [],
+      display: false,
+      componentKey: 0,
+      data: [
+      ],
+      searchModel: '',
+      chosen: "All",
+      establishments: [
+      {
+        storeName: '',
+        key: ''
+      },]
     }
+  },
+
+  computed: {
+    ...mapState('store', ['userDetails'])
+  },
+  methods: {
+    onSelectEstablishment (est_key) {
+      var estRef = firebaseDb.ref('users/' + est_key + '/name');
+      estRef.on('value', (snapshot) => {
+          firebaseDb.ref('stat_auth_cookie').set({id: est_key, name: snapshot.val()})
+          this.chosen = snapshot.val();
+      })
+      
+      var rooms = []
+      var roomsRef = firebaseDb.ref('users/' + est_key + '/customers')
+      roomsRef.once('value', function (snapshot) {
+      snapshot.forEach(function (childSnapshot) {
+          var room = childSnapshot.val()
+          var date = new Date(parseInt(room.date)).toString()
+          rooms.push({ name: room.name, age: room.age, address: room.address, contact: room.contact, timeStamp: date, key: childSnapshot.key })
+          })
+      })
+      this.data = rooms
+      this.forceRerender()
+    },
+    forceRerender() {
+      this.componentKey += 1
+    }
+
+  },
+  mounted () {
+    var ref = firebaseDb.ref("stat_auth_cookie")
+    ref.on('value', snapshot => {
+      this.chosen = snapshot.val().name
+    })
+    var rooms = []
+    var roomsRef = firebaseDb.ref('users')
+    roomsRef.on('value',  snapshot => {
+      snapshot.forEach( childSnapshot => {
+        var room = childSnapshot.val()
+        rooms.push({ storeName: room.name, key: childSnapshot.key })
+      })  
+    })
+    this.establishments = rooms
+    this.d = Date.now()
+    this.ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(this.d);
+    this.mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(this.d);
+    this.da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(this.d);
+    this.date = `${this.ye}/${this.mo}/${this.da}`
   }
+  
+  
 }
 </script>

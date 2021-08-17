@@ -32,7 +32,12 @@ const routes = [{
                 path: '/mschool',
                 component: () =>
                     import ('pages/MonitorSchool.vue')
-            }
+            },
+            {
+            path: '/notif',
+                component: () =>
+                    import ('pages/Notif.vue')
+            },
         ]
     }
 ]
